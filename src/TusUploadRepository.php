@@ -89,7 +89,7 @@ class TusUploadRepository
     public function create($user, $requestId, $filename, $size, $mimeType = null, $offset = 0, $metadata = null)
     {
         // todo: add some validation
-
+    
         $upload = (new TusUpload)->forceFill([
             'user_id' => $user instanceof Model ? $user->getKey() : $user,
             'request_id' => $requestId,

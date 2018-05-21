@@ -17,7 +17,7 @@ class Tus
         Route::group([
             'prefix' => '',
             'namespace' => 'OneOffTech\TusUpload\Http\Controllers',
-            'middleware' => 'web',
+            'middleware' => 'auth:api'
         ], function ($router) {
 
             $router->resource(

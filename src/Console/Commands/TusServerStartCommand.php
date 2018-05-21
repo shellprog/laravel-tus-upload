@@ -81,7 +81,6 @@ class TusServerStartCommand extends Command
             $this->line('Going to shutdown...');
             
         } catch (\Exception $ex) {
-
             $this->error($ex->getMessage());
            return 1;
         }

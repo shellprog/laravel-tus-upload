@@ -34,8 +34,9 @@ class TusUploadQueueController extends BaseController
      */
     public function index(Request $request)
     {
+        $user = \App\User::find(1);
         //
-        return response()->json($this->uploads->forUser($request->user()));
+        return response()->json($this->uploads->forUser($user));
     }
 
 
@@ -50,10 +51,15 @@ class TusUploadQueueController extends BaseController
      */
     public function store(CreateUploadRequest $request)
     {
+        $user = \App\User::find(1);
+
+        do {
+            $request_id = \str_random(16);
+        } while (TusUpload::where("request_id", "=", $request_id)->first() instanceof TusUpload);
 
         $upload = $this->uploads->create(
-            $request->user(), 
-            $request->input('id'), 
+            $user, 
+            $request_id, 
             $request->input('filename'), 
             (int)$request->input('filesize'),
             $request->input('filetype', null),
@@ -83,8 +89,9 @@ class TusUploadQueueController extends BaseController
      */
     public function destroy(Request $request, $upload)
     {
+        $user = \App\User::find(1);
 
-        $cancelled_upload = $this->uploads->cancel($this->uploads->findByUploadRequest($request->user(), $upload));
+        $cancelled_upload = $this->uploads->cancel($this->uploads->findByUploadRequest($user, $upload));
 
         event(new TusUploadCancelled($cancelled_upload));
 

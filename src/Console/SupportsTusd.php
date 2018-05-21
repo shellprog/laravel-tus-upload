@@ -33,7 +33,7 @@ trait SupportsTusd
     public static function startTusd(callable $callback = null)
     {
         static::$tusProcess = static::buildTusProcess();
-
+        
         static::$tusProcess->setTimeout(null);
         static::$tusProcess->setIdleTimeout(null);
 
@@ -75,6 +75,8 @@ trait SupportsTusd
         $path = config('tusupload.executable').static::driverSuffix();
         $driver = static::$tusDriver ?: realpath($path);
 
+        
+
         if (is_bool($driver) || realpath($driver) === false) {
             throw new RuntimeException("Invalid path to tusd [{$driver}, {$path}].");
         }
@@ -88,8 +90,10 @@ trait SupportsTusd
         // foreach ($arguments as $argument) {
         //     $builder->add($argument);
         // }
-        $arguments = array_merge([realpath($driver)], $tus_arguments);
 
+            
+        $arguments = array_merge([realpath($driver)], $tus_arguments);
+      
         return new Process($arguments);
     }
 
@@ -115,13 +119,20 @@ trait SupportsTusd
             '-host=' . config('tusupload.host'),
             '-port=' . config('tusupload.port'),
             '-base-path=' . config('tusupload.base_path'),
-            '-dir=' .  config('tusupload.storage'),            
+            '-dir=' .  config('tusupload.storage'),
+            '-hooks-http=' .  config('tusupload.hooks_url')
         ];
 
         $hooksPath = static::hooksPath();
 
         if(!empty($hooksPath)){
             $arguments[] = '-hooks-dir=' . $hooksPath;
+        }
+
+        $hooksURL = static::hooksURL();
+
+        if(!empty($hooksURL)){
+            $arguments[] = '-hooks-http=' . $hooksURL;
         }
 
         if(config('tusupload.behind_proxy')){
@@ -176,5 +187,17 @@ trait SupportsTusd
             default:
                 return $base . '/linux';
         }
+    }
+
+    protected static function hooksURL()
+    {
+
+        $url = config('tusupload.hooks_url');
+
+        if(empty($url)){
+            return null;
+        }
+
+        $url;
     }
 }

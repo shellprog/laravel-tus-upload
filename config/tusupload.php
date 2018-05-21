@@ -23,6 +23,8 @@ return [
     */
 
     'hooks' => env('TUSUPLOAD_HOOKS_DIRECTORY') ?: __DIR__ . '/../hooks',
+
+    'hooks_url' => env('TUSUPLOAD_HOOKS_URL') ?: __DIR__ . 'http://localhost/api/tus-events',
     
     /*
     |--------------------------------------------------------------------------
@@ -90,7 +92,7 @@ return [
     |
     */
 
-    'storage' => env('TUSUPLOAD_STORAGE_PATH') ?: storage_path('app/uploads'),
+    'storage' => env('TUSUPLOAD_STORAGE_PATH') ?: public_path('/uploads'),
     
     /*
     |--------------------------------------------------------------------------
