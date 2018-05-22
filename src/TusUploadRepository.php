@@ -58,6 +58,70 @@ class TusUploadRepository
         return TusUpload::where('upload_token', $uploadToken)->where('request_id', $requestId)->first();
     }
 
+     /**
+     * Get an upload by batchId.
+     *
+     * @param  string  $batchId
+     * @return \OneOffTech\TusUpload\TusUpload|null
+     */
+    public function findByBatchId($batchId)
+    {
+        return TusUpload::where('batch_id', $batchId)->get();
+    }
+
+     /**
+     * Get single resource.
+     *
+     * @param  string  $queueId
+     * @return \OneOffTech\TusUpload\TusUpload|null
+     */
+    public function findById($queueId)
+    {
+        return TusUpload::where('id', $queueId)->first();
+    }
+
+     /**
+     * Get resource by batchId and cancelled status.
+     *
+     * @param  string  $batchId
+     * @param  string  $status
+     * @return \OneOffTech\TusUpload\TusUpload|null
+     */
+    public function findByBatchIdCancelledStatus($batchId)
+    {
+        return TusUpload::where('batch_id', $batchId)->whereNotNull('cancelled_at')->get();
+    }
+
+     /**
+     * Get resource by batchId and completed status.
+     *
+     * @param  string  $batchId
+     * @param  string  $status
+     * @return \OneOffTech\TusUpload\TusUpload|null
+     */
+    public function findByBatchIdCompletedStatus($batchId)
+    {
+        return TusUpload::where('batch_id', $batchId)->whereNotNull('completed_at')->get();
+    }
+
+     /**
+     * Get single resource progress.
+     *
+     * @param  string  $queueId
+     * @return \OneOffTech\TusUpload\TusUpload|null
+     */
+    public function findProgress($queueId)
+    {
+        $data = TusUpload::where('id', $queueId)->first();
+
+        if($data){
+            $percentage = ($data->offset / $data->size) * 100;
+            return $percentage;
+        }
+
+        return null;
+    }
+
     /**
      * Get the upload instances for the given user ID.
      *
