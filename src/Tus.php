@@ -17,11 +17,11 @@ class Tus
         Route::group([
             'prefix' => '',
             'namespace' => 'OneOffTech\TusUpload\Http\Controllers',
-            'middleware' => 'auth:api'
+            'middleware' => 'auth:api',
         ], function ($router) {
 
             $router->resource(
-                '/uploadjobs', 
+                '/api/uploadjobs', 
                 'TusUploadQueueController', 
                 [
                     'only' => [

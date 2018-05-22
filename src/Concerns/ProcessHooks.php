@@ -18,9 +18,6 @@ trait ProcessHooks
      * @return bool
      */
     private function isPayloadValid($payload){
-
-        \Log::debug('isPayload Valid');
-
         return $payload->has('MetaData.filename')
                && $payload->has('MetaData.token')
                && !empty($payload->id());
@@ -31,34 +28,28 @@ trait ProcessHooks
      */
     private function preCreate(TusHookInput $payload)
     {
-        \Log::debug('PRE CREATE');
         $requestId = $payload->id();
         $token = $payload->input('MetaData.token');
+
+        $batchId = $payload->input('MetaData.batchId');
         
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
 
-        \Log::debug("Request ID: ");
-        \Log::debug($requestId);
-        \Log::debug("Token: ");
-        \Log::debug($token);
+        $this->uploads->updateBatchId($upload, $batchId);
 
         if(is_null($upload)){
             Log::info("Upload identified by {$requestId}-{$token} not existing.");
             throw new Exception('Upload not found, continuation not granted');
         }
 
-        \Log::debug('Returning from pre create');
-
         return true; 
     }
-    
 
     /**
      * Process the post-receive hook
      */
     private function postReceive(TusHookInput $payload)
     {
-        \Log::debug('POST RECEIVE');
         $requestId = $payload->id();
         $token = $payload->input('MetaData.token');
         
@@ -79,7 +70,6 @@ trait ProcessHooks
      */
     private function postFinish(TusHookInput $payload)
     {
-        \Log::debug('POST FINISH');
         $requestId = $payload->id();
         $token = $payload->input('MetaData.token');
         
@@ -104,7 +94,6 @@ trait ProcessHooks
      */
     private function postTerminate(TusHookInput $payload)
     {
-        \Log::debug('POST TERMINATE');
         $requestId = $payload->id();
         $token = $payload->input('MetaData.token');
         

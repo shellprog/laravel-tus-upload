@@ -19,6 +19,9 @@ class CreateTusUploadsQueueTable extends Migration
             // used as key for connecting the upload to the user that is performing it
             $table->integer('user_id')->index()->unsigned(); 
 
+             // used as key for connecting uploads to category
+             $table->integer('batch_id')->index()->unsigned(); 
+
             // the identifier of the client request, used by the client to identify each upload in the queue
             $table->string('request_id')->index(); 
             

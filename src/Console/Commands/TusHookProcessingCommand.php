@@ -43,6 +43,7 @@ class TusHookProcessingCommand extends Command
     public function __construct(TusUploadRepository $uploads)
     {
         parent::__construct();
+
         $this->uploads = $uploads;
     }
 

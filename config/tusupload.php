@@ -22,9 +22,9 @@ return [
     |
     */
 
-    'hooks' => env('TUSUPLOAD_HOOKS_DIRECTORY') ?: __DIR__ . '/../hooks',
+    'hooks' => env('TUSUPLOAD_HOOKS_DIRECTORY') ?: '',
 
-    'hooks_url' => env('TUSUPLOAD_HOOKS_URL') ?: __DIR__ . 'http://localhost/api/tus-events',
+    'hooks_url' => env('TUSUPLOAD_HOOKS_URL') ?: __DIR__ . 'http://127.0.0.1/api/tus-events',
     
     /*
     |--------------------------------------------------------------------------

@@ -13,10 +13,7 @@ class CreateUploadRequest extends FormRequest
      */
     public function authorize()
     {
-        
-        return true;
-        // dd($this->user());
-        // return !is_null($this->user()) && $this->user()->can('upload-via-tus', $this);
+        return !is_null($this->user()) && $this->user()->can('upload-via-tus', $this);
     }
 
     /**
@@ -27,6 +24,7 @@ class CreateUploadRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'required|string|unique:tus_uploads_queue,request_id',
             'filename' => 'required|string|min:1',
             'filesize' => 'present|numeric|min:0',
             'filetype' => 'present|string',
