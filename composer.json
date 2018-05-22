@@ -1,5 +1,5 @@
 {
-    "name": "oneofftech/laravel-tus-upload",
+    "name": "shellprog/laravel-tus-upload",
     "description": "Upload files to your Laravel application with the tus.io resumable upload protocol.",
     "keywords": ["laravel", "package", "tus", "upload"],
     "license": "MIT",
