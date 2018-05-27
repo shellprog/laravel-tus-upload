@@ -52,19 +52,19 @@ class TusUploadQueueController extends BaseController
     {
 
         $upload = $this->uploads->create(
-            $request->user(), 
-            $request->input('id'), 
-            $request->input('filename'), 
-            (int)$request->input('filesize'),
-            $request->input('filetype', null),
+            $request->user(),
+            $request->input('id'),
+            $request->input('name'),
+            (int)$request->input('size'),
+            $request->input('type', null),
             0,
-            $request->except(['id', 'filename', 'filesize', 'filetype']));
+            $request->except(['id', 'name', 'size', 'type']));
 
 
         $data = [
             'request_id' => $upload->request_id,
             'upload_token' => $upload->upload_token,
-            'filename' => $upload->filename,
+            'name' => $upload->filename,
             'size' => $upload->size,
             'location' => tus_url(),
         ];

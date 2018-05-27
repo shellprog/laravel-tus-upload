@@ -31,11 +31,9 @@ trait ProcessHooks
         $requestId = $payload->id();
         $token = $payload->input('MetaData.token');
 
-        $batchId = $payload->input('MetaData.batchId');
+        $refId = $payload->input('MetaData.refId');
         
         $upload = $this->uploads->findByUploadRequestAndToken($requestId, $token);
-
-        $this->uploads->updateBatchId($upload, $batchId);
 
         if(is_null($upload)){
             Log::info("Upload identified by {$requestId}-{$token} not existing.");

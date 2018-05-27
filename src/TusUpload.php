@@ -38,6 +38,11 @@ class TusUpload extends Model
      */
     protected $table = 'tus_uploads_queue';
 
+    const STATUS_IN_PROGRESS = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_CANCELLED = 3;
+    const STATUS_COMPLETED = 4;
+
     /**
      * The guarded attributes on the model.
      *

@@ -162,6 +162,7 @@ class TusUploadRepository
             'offset' => $offset,
             'mimetype' => $mimeType,
             'metadata' => $metadata,
+            'status' => TusUpload::STATUS_IN_PROGRESS,
             'upload_token' => str_random(60 - strlen($requestId)) . $requestId,
             'upload_token_expires_at' => Carbon::now()->addHour(),
         ]);
@@ -216,6 +217,7 @@ class TusUploadRepository
         return $upload;
     }
 
+
     /**
      * Update the given upload with the tus generated identifier.
      *
@@ -263,6 +265,8 @@ class TusUploadRepository
      */
     public function cancel(TusUpload $upload)
     {
+
+        $upload->status = TusUpload::STATUS_CANCELLED;
         $upload->cancelled = true;
         $upload->save();
 
@@ -282,6 +286,7 @@ class TusUploadRepository
     public function complete(TusUpload $upload)
     {
         $upload->forceFill([
+            'status' => TusUpload::STATUS_COMPLETED,
             'completed' => true,
             'offset' => $upload->size
         ])->save();

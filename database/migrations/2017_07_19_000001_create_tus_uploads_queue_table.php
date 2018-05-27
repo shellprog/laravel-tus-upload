@@ -20,7 +20,7 @@ class CreateTusUploadsQueueTable extends Migration
             $table->integer('user_id')->index()->unsigned(); 
 
              // used as key for connecting uploads to category
-             $table->integer('batch_id')->index()->unsigned(); 
+             $table->integer('batch_id')->index()->unsigned();
 
             // the identifier of the client request, used by the client to identify each upload in the queue
             $table->string('request_id')->index(); 
@@ -44,6 +44,8 @@ class CreateTusUploadsQueueTable extends Migration
             
             // The upload's current offset in bytes.
             $table->unsignedBigInteger('offset')->default(0);
+
+            $table->tinyInteger('status')->default(\OneOffTech\TusUpload\TusUpload::STATUS_PENDING);
 
             // the upload has been cancelled by the user
             $table->timestamp('cancelled_at')->nullable();
