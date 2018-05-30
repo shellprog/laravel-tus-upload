@@ -13,7 +13,7 @@ class CreateUploadRequest extends FormRequest
      */
     public function authorize()
     {
-        return !is_null($this->user()) && $this->user()->can('upload-via-tus', $this);
+        return !is_null($this->user());
     }
 
     /**
