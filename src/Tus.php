@@ -35,6 +35,7 @@ class Tus
                 ]
             );
 
+            $router->post('/api/uploadjobs/events','TusUploadQueueController@handle');
             $router->post('/api/uploadjobs/cancel','TusUploadQueueController@cancel');
 
         });

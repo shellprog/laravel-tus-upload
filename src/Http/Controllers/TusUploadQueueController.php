@@ -2,20 +2,19 @@
 
 namespace OneOffTech\TusUpload\Http\Controllers;
 
-use OneOffTech\TusUpload\TusUpload;
-use Illuminate\Http\Request;
-use OneOffTech\TusUpload\TusUploadRepository;
-
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use OneOffTech\TusUpload\Http\Requests\CreateUploadRequest;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
+use OneOffTech\TusUpload\Concerns\ProcessHooks;
 use OneOffTech\TusUpload\Events\TusUploadCancelled;
+use OneOffTech\TusUpload\Http\Requests\CreateUploadRequest;
+use OneOffTech\TusUpload\TusUploadRepository;
 
 class TusUploadQueueController extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, ProcessHooks;
 
     /**
      * @var \OneOffTech\TusUpload\TusUploadRepository
@@ -25,6 +24,40 @@ class TusUploadQueueController extends BaseController
     public function __construct(TusUploadRepository $uploads)
     {
         $this->uploads = $uploads;
+    }
+
+    public function handle()
+    {
+
+        $inputJSON = file_get_contents('php://input');
+        $input = json_decode($inputJSON, true);
+
+        $hook = $_SERVER['HTTP_HOOK_NAME'];
+
+        $payloadString = $inputJSON;
+
+        //Log::debug($payloadString);
+        $payload = TusHookInput::create($payloadString);
+
+        //Log::info("Processing $hook...", ['payload' => $payload]);
+
+        if (!in_array($hook, ['pre-create', 'post-finish', 'post-terminate', 'post-receive'])) {
+            throw new Exception("Unrecognized hook {$hook}");
+        }
+
+        if (is_null(!$payload)) {
+            throw new Exception('Payload parsing error');
+        }
+
+        if (!$this->isPayloadValid($payload)) {
+            throw new Exception('Invalid payload');
+        }
+
+        $done = $this->{camel_case($hook)}($payload);
+
+        //Log::info("$hook processed.", ['payload' => $payload, 'done' => $done]);
+
+        return $done ? 0 : 1;
     }
 
     /**
@@ -42,10 +75,10 @@ class TusUploadQueueController extends BaseController
     /**
      * Creates an entry in the upload queue.
      *
-     * Checks if the user can do the upload and returns the token 
+     * Checks if the user can do the upload and returns the token
      * for the real upload
      *
-     * @param  OneOffTech\TusUpload\Http\Requests\CreateUploadRequest  $request
+     * @param  OneOffTech\TusUpload\Http\Requests\CreateUploadRequest $request
      * @return \Illuminate\Http\Response|OneOffTech\TusUpload\TusUpload
      */
     public function store(CreateUploadRequest $request)
@@ -72,11 +105,11 @@ class TusUploadQueueController extends BaseController
         return response()->json($data);
 
     }
-    
+
     /**
      * Remove the specified resource from storage.
      *
-     * It can be done only if the upload is terminated (either 
+     * It can be done only if the upload is terminated (either
      * because completed or cancelled)
      *
      * @return \Illuminate\Http\Response
