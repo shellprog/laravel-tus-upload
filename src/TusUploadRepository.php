@@ -33,6 +33,17 @@ class TusUploadRepository
     {
         return TusUpload::where('tus_id', $tusId)->first();
     }
+    
+     /**
+     * Get an upload.
+     *
+     * @param  string  $requestId
+     * @return \OneOffTech\TusUpload\TusUpload|null
+     */
+    public function findByRequestId($requestId)
+    {
+        return TusUpload::where('request_id', $requestId)->first();
+    }
 
     /**
      * Get an upload given the user and the request ID.
